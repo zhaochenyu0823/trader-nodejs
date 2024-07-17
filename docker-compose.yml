@@ -1,0 +1,25 @@
+version: '3.8'
+services:
+  db:
+    build: .
+    container_name: trader_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: trader
+      MYSQL_DATABASE: trader
+      MYSQL_USER: trader
+      MYSQL_PASSWORD: trader
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./tbl-csv:/var/lib/mysql-files  
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql  
+    command: --sql-mode="NO_ENGINE_SUBSTITUTION" --explicit_defaults_for_timestamp
+    networks:
+      - trader_network
+
+volumes:
+  db_data:
+
+networks:
+  trader_network:

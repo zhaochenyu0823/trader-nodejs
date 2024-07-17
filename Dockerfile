@@ -1,18 +1,20 @@
-# 公式の MySQL イメージをベースイメージとして使用
-FROM mysql:8.0
+# 使用官方 Node.js 镜像作为基础镜像
+FROM node:14
 
-# 環境変数を設定
-ENV MYSQL_ROOT_PASSWORD=trader
-ENV MYSQL_DATABASE=trader
-ENV MYSQL_USER=trader
-ENV MYSQL_PASSWORD=trader
+# 设置工作目录
+WORKDIR /usr/src/app
 
-# 初期化 SQL スクリプトをコンテナにコピー
-COPY init.sql /docker-entrypoint-initdb.d/
+# 复制 package.json 和 package-lock.json（如果存在）
+COPY package*.json ./
 
-# CSV ファイルをコンテナにコピー
-COPY tbl-csv /var/lib/mysql-files/
+# 安装依赖
+RUN npm install
 
-# 権限を設定
-RUN chmod -R 644 /var/lib/mysql-files
-RUN chown -R mysql:mysql /var/lib/mysql-files
+# 复制应用代码
+COPY . .
+
+# 暴露应用程序端口
+EXPOSE 3000
+
+# 启动应用程序
+CMD ["npm", "start"]

@@ -1,7 +1,7 @@
+import { RowDataPacket } from 'mysql2/promise';
 import connection from '../config/db';
-import mysql from 'mysql2';
 
-export interface OperationHistory {
+export interface OperationHistory extends RowDataPacket {
   trader_code: string; // 事業者コード, CHAR(3)
   account_id: string; // アカウントID, VARCHAR(40)
   screen_code: string; // 画面コード, VARCHAR(40)
@@ -13,11 +13,15 @@ export interface OperationHistory {
   regist_account: string; // 登録アカウント, VARCHAR(40)
 }
 
-export const getAllHistoryData = (callback: (err: mysql.QueryError | null, results?: OperationHistory[]) => void) => {
-  connection.query('SELECT * FROM trader_portal_operation_history', (err, results) => {
-    if (err) {
-      return callback(err);
+export const getAllHistoryData = async (): Promise<OperationHistory[]> => {
+  try {
+    const [results] = await connection.query<OperationHistory[]>('SELECT * FROM trader_portal_operation_history');
+    return results;
+  } catch (err) {
+    if (err instanceof Error) {
+      throw new Error(`Database query failed: ${err.message}`);
+    } else {
+      throw new Error('An unknown error occurred');
     }
-    callback(null, results as OperationHistory[]);
-  });
+  }
 };

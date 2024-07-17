@@ -5,42 +5,42 @@ services:
       context: .
     container_name: trader_app
     environment:
-      - NODE_ENV=development
-      - DB_HOST=db
-      - DB_USER=trader
-      - DB_PASSWORD=trader
-      - DB_NAME=trader
-      - DB_PORT=3306
+      - NODE_ENV=development # 環境変数：開発モード
+      - DB_HOST=db           # データベースのホスト名
+      - DB_USER=trader       # データベースのユーザー名
+      - DB_PASSWORD=trader   # データベースのパスワード
+      - DB_NAME=trader       # データベースの名前
+      - DB_PORT=3306         # データベースのポート
     volumes:
-      - .:/usr/src/app
+      - .:/usr/src/app       # ボリューム：ホストの現在のディレクトリをコンテナ内の作業ディレクトリにマウント
     ports:
-      - "3000:3000"
+      - "3000:3000"          # ポート：ホストの3000ポートをコンテナの3000ポートにマップ
     depends_on:
-      - db
+      - db                   # 依存関係：dbサービスの起動を待機
     networks:
-      - trader_network
+      - trader_network       # ネットワーク：trader_networkに接続
 
   db:
     build:
       context: ./mysql
     container_name: trader_mysql
     environment:
-      MYSQL_ROOT_PASSWORD: trader
-      MYSQL_DATABASE: trader
-      MYSQL_USER: trader
-      MYSQL_PASSWORD: trader
+      MYSQL_ROOT_PASSWORD: trader # 環境変数：MySQLのルートパスワード
+      MYSQL_DATABASE: trader      # 環境変数：デフォルトのデータベース名
+      MYSQL_USER: trader          # 環境変数：MySQLのユーザー名
+      MYSQL_PASSWORD: trader      # 環境変数：MySQLのパスワード
     ports:
-      - "3306:3306"
+      - "3306:3306"               # ポート：ホストの3306ポートをコンテナの3306ポートにマップ
     volumes:
-      - db_data:/var/lib/mysql
-      - ./mysql/tbl-csv:/var/lib/mysql-files
-      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
-    command: --sql-mode="NO_ENGINE_SUBSTITUTION" --explicit_defaults_for_timestamp
+      - db_data:/var/lib/mysql           # ボリューム：データ永続化のためのマウントポイント
+      - ./mysql/tbl-csv:/var/lib/mysql-files  # ボリューム：CSVファイルのマウントポイント
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql # ボリューム：初期化SQLスクリプトのマウントポイント
+    command: --sql-mode="NO_ENGINE_SUBSTITUTION" --explicit_defaults_for_timestamp # MySQL起動コマンドのオプション
     networks:
-      - trader_network
+      - trader_network                    # ネットワーク：trader_networkに接続
 
 volumes:
-  db_data:
+  db_data: # ボリューム：データベースデータの永続化
 
 networks:
-  trader_network:
+  trader_network: # ネットワーク：サービス間の通信用

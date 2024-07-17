@@ -1,20 +1,20 @@
-# 使用官方 Node.js 镜像作为基础镜像
+# 公式の Node.js イメージをベースイメージとして使用
 FROM node:14
 
-# 设置工作目录
+# 作業ディレクトリを設定
 WORKDIR /usr/src/app
 
-# 复制 package.json 和 package-lock.json（如果存在）
+# package.json と package-lock.json（存在する場合）をコピー
 COPY package*.json ./
 
-# 安装依赖
-RUN npm install
+# 依存関係をインストール
+RUN npm install && ls node_modules
 
-# 复制应用代码
+# アプリケーションコードをコピー
 COPY . .
 
-# 暴露应用程序端口
+# アプリケーションのポートを公開
 EXPOSE 3000
 
-# 启动应用程序
+# アプリケーションを起動
 CMD ["npm", "start"]
